@@ -1,0 +1,71 @@
+# Pulseboard — Cursor Rules
+
+## Branching Convention
+
+Use `type/short-description` for branch names.
+
+Examples:
+- `feat/manager-dashboard`
+- `refactor/ui-shell`
+- `fix/table-padding`
+
+Allowed types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`.
+
+## Component Architecture (SOLID — SRP)
+
+- Components must have a **Single Responsibility**.
+- Max ~150–200 lines per file. Split when a file grows beyond this.
+- Separate UI rendering from state management (presentational vs. interactive leaves).
+- Prefer composition over large monolithic views.
+
+## Next.js Best Practices
+
+- Default to **React Server Components (RSC)**.
+- Use `"use client"` **only at leaf nodes** (interactive forms, buttons with local state, dropdowns, mobile nav toggles) to maximize server-side performance.
+- Use the `app/` directory correctly:
+  - Shared chrome (sidebar, header) → Layouts
+  - Route-specific UI → Pages
+- Do not add backend business logic, database calls, or authentication unless explicitly requested.
+
+## Naming Conventions
+
+| Kind | Convention | Example |
+|------|------------|---------|
+| Components & Interfaces | PascalCase | `ReportForm.tsx`, `IWeeklyReport` |
+| Variables & Functions | camelCase | `filteredReports`, `handleSubmit` |
+| Constants & Enums | UPPER_SNAKE_CASE | `REPORT_STATUS` |
+| Folders | kebab-case | `components/features/reports` |
+
+## Types & Interfaces
+
+- Strictly use TypeScript **interfaces** over `type` aliases for object shapes.
+- Prefer prefixed interfaces for domain models when helpful (e.g. `IWeeklyReport`).
+- Never use `any`.
+- Keep shared interfaces in `/types`.
+- Enums live in `/types/enums.ts` for standardized values (e.g. Status: Draft, Submitted, Needs Correction, Approved).
+
+## File Structure
+
+```
+/components/ui                    # Dumb / reusable shadcn primitives
+/components/features/[feature]    # Domain-specific feature components
+/components/layout                # App shell (sidebar, header)
+/components/shared                # Cross-feature presentational helpers
+/types                            # Shared interfaces + enums
+/lib                              # Utilities and static mock data (UI-only for now)
+/app                              # App Router layouts & pages
+```
+
+Examples:
+- `components/ui/button.tsx`
+- `components/features/reports/ReportHistoryTable.tsx`
+- `components/features/dashboard/DashboardMetrics.tsx`
+
+## UI Refactor Scope
+
+When restructuring UI from a monolith:
+1. Extract layout shell into layouts.
+2. Keep shadcn primitives in `components/ui`.
+3. Place domain views under `components/features/[feature-name]`.
+4. Wire real App Router routes instead of simulated client-side view state.
+5. Preserve visual behavior; do not invent backend logic.
