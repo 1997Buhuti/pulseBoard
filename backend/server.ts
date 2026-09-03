@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import './load-env'
 import { clerkMiddleware } from '@clerk/express'
 import cors from 'cors'
 import express from 'express'
