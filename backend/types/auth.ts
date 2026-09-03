@@ -7,6 +7,14 @@ export interface IAuthContext {
   role: UserRole
 }
 
-export interface IAuthenticatedRequest extends Request {
+/**
+ * App auth context after `requireAuth`.
+ * Omits Clerk's `Request['auth']` so our shaped `auth` does not conflict.
+ */
+export type IAuthenticatedRequest = Omit<Request, 'auth'> & {
   auth: IAuthContext
+}
+
+export function asAuthenticatedRequest(req: Request): IAuthenticatedRequest {
+  return req as unknown as IAuthenticatedRequest
 }

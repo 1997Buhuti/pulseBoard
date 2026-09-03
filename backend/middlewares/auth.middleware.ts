@@ -1,6 +1,6 @@
 import { getAuth } from '@clerk/express'
 import type { NextFunction, Request, Response } from 'express'
-import type { IAuthenticatedRequest, UserRole } from '../types/auth'
+import { asAuthenticatedRequest, type UserRole } from '../types/auth'
 import { AppError } from '../utils/AppError'
 
 function resolveRole(claims: Record<string, unknown> | null | undefined): UserRole {
@@ -26,7 +26,7 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
       throw new AppError('Unauthorized', 401)
     }
 
-    ;(req as IAuthenticatedRequest).auth = {
+    asAuthenticatedRequest(req).auth = {
       userId: auth.userId,
       role: resolveRole(auth.sessionClaims as Record<string, unknown> | null | undefined),
     }
@@ -43,7 +43,7 @@ export function requireManager(
   next: NextFunction
 ): void {
   try {
-    const { auth } = req as IAuthenticatedRequest
+    const { auth } = asAuthenticatedRequest(req)
 
     if (!auth?.userId) {
       throw new AppError('Unauthorized', 401)

@@ -2,7 +2,10 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { reportController } from '../controllers/report.controller'
 import { requireAuth, requireManager } from '../middlewares/auth.middleware'
 import { validate } from '../middlewares/validate.middleware'
-import type { IAuthenticatedRequest } from '../types/auth'
+import {
+  asAuthenticatedRequest,
+  type IAuthenticatedRequest,
+} from '../types/auth'
 import {
   CreateReportSchema,
   ReviewReportSchema,
@@ -20,7 +23,7 @@ function asAuth(
   ) => Promise<void> | void
 ) {
   return (req: Request, res: Response, next: NextFunction) =>
-    handler(req as IAuthenticatedRequest, res, next)
+    handler(asAuthenticatedRequest(req), res, next)
 }
 
 reportRouter.use(requireAuth)
